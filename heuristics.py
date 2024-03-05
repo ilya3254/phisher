@@ -13,4 +13,4 @@ class DomainMutation:
     def fetch_domain_mutations(self):
         for domain in self.domain_list:
             self.get_domain_mutations(domain)
-            #функция, делающая запрос Netlass.io
+            #функция, делающая запрос Netlas.io
