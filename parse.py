@@ -25,3 +25,4 @@ class Parse:
                 case "__sertificates__":
                     None
                 # Other points ...
+                    #Yo!
