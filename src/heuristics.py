@@ -1,12 +1,13 @@
 import dnstwist
 import netlas
 from os import remove, path
+from time import sleep
 
 apikey = 'apikey'
 
 
 def write_bytes_to_file(iterator, filepath):
-    with open(filepath, 'wb+') as file:
+    with open(filepath, 'ab') as file:
         for chunk in iterator:
             file.write(chunk)
 
@@ -72,6 +73,7 @@ class DomainMutation:
                                                                    fields=fields,
                                                                    size=count)
                     write_bytes_to_file(iterator_of_bytes, dst_filepath)
+                sleep(0.5)
 
 # Example:
 # mutation = DomainMutation([input_list])
