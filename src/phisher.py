@@ -13,6 +13,7 @@ cout.print_banner()
 parser = argparse.ArgumentParser()
 
 parser.add_argument("input_file", help="file with resources")
+parser.add_argument("api_key", help="personal API key")
 parser.add_argument("-v", "--verbose", help="run in verbose mode", 
                      action="store_true")
 parser.add_argument("-n", "--normal", help="run in normal mode", 
@@ -33,6 +34,6 @@ else:
 input_data = parse.Parse()
 input_data.magic(parse.read(args.input_file))
 
-domain_mutation = heuristics.DomainMutation(input_data.domains)
+domain_mutation = heuristics.DomainMutation(input_data.domains, args.api_key)
 domain_mutation.search_mutation_domains()
 

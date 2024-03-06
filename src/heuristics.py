@@ -3,8 +3,6 @@ import netlas
 from os import remove, path
 from time import sleep
 
-apikey = 'apikey'
-
 
 def write_bytes_to_file(iterator, filepath):
     with open(filepath, 'ab') as file:
@@ -13,9 +11,10 @@ def write_bytes_to_file(iterator, filepath):
 
 
 class DomainMutation:
-    def __init__(self, input_list):
+    def __init__(self, input_list, api_key):
         self.domain_list = input_list
         self.mutation_data_filepath = 'domain_mutations.txt'
+        self.api_key = api_key
 
      # Gets a domain mutations list and saves in file
     def _mutate_domain(self, domain_name):
@@ -60,7 +59,7 @@ class DomainMutation:
         with open(dst_filepath, 'wb') as file:
             pass
         # Create connection to Netlas
-        netlas_connection = netlas.Netlas(api_key=apikey)
+        netlas_connection = netlas.Netlas(api_key=self.api_key)
         for domain in self.domain_list:
             self._mutate_domain(domain)
             queries = self._make_query()
