@@ -1,5 +1,6 @@
 import dnstwist
 import netlas
+from os import remove
 
 apikey = 'apikey'
 
@@ -13,10 +14,12 @@ def write_bytes_to_file(iterator, filepath):
 class DomainMutation:
     def __init__(self, input_list):
         self.domain_list = input_list
+        print(self.domain_list)
         self.mutation_data_filepath = 'domain_mutations.txt'
 
     # Gets a domain mutations list and saves in file
     def _mutate_domain(self, domain_name):
+        remove(self.mutation_data_filepath)
         dnstwist.run(domain=domain_name, format='list',
                      output=self.mutation_data_filepath)
 
@@ -28,7 +31,7 @@ class DomainMutation:
         return query
 
     # Executes a query to Netlas, saves the response to dst_filepath
-    def search_mutation_domains(self, dst_filepath='С:\\Users\\nick\\Desktop\\output_file.json', fields=None):
+    def search_mutation_domains(self, dst_filepath='output_file.json', fields=None):
         # Clear file
         with open(dst_filepath, 'wb') as file:
             pass

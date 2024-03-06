@@ -1,5 +1,4 @@
-from os import path
-
+from os import path, abort
 
 def read(file):
     if (path.exists(file) == True):
@@ -8,7 +7,8 @@ def read(file):
         fd.close()
         return inf
     else:
-        print("Read error: File does not exist")
+        print("read error: File does not exist")
+        abort()
 
 
 class Parse:
