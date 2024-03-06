@@ -15,6 +15,7 @@ class DomainMutation:
         self.domain_list = input_list
         self.mutation_data_filepath = 'domain_mutations.txt'
 
+    # Gets a domain mutations list and saves in file
     def _mutate_domain(self, domain_name):
         dnstwist.run(domain=domain_name, format='list',
                      output=self.mutation_data_filepath)
@@ -27,7 +28,7 @@ class DomainMutation:
         return query
 
     # Executes a query to Netlas, saves the response to dst_filepath
-    def search_mutation_domains(self, dst_filepath='..\\output\\output_file.json', fields=None):
+    def search_mutation_domains(self, dst_filepath='С:\\Users\\nick\\Desktop\\output_file.json', fields=None):
         # Clear file
         with open(dst_filepath, 'wb') as file:
             pass
