@@ -17,12 +17,21 @@ class DomainMutation:
         print(self.domain_list)
         self.mutation_data_filepath = 'domain_mutations.txt'
 
-    # Gets a domain mutations list and saves in file
+     # Gets a domain mutations list and saves in file
     def _mutate_domain(self, domain_name):
+        # Delete previous domain file
         if(path.exists(self.mutation_data_filepath)):
             remove(self.mutation_data_filepath)
+
+        # Mutate and saves in domain file
         dnstwist.run(domain=domain_name, format='list',
                      output=self.mutation_data_filepath)
+        
+        # Deletes first string
+        f=open(self.mutation_data_filepath).readlines()
+        f.pop(0)
+        with open(self.mutation_data_filepath,'w') as F:
+            F.writelines(f)
 
     # Generates a query with domain mutations like 'domain:x.com || domain:y.com'
     def _make_query(self, max_query_length=3000):
