@@ -25,11 +25,25 @@ class DomainMutation:
                      output=self.mutation_data_filepath)
 
     # Generates a query with domain mutations like 'domain:x.com || domain:y.com'
-    def _make_query(self):
+    def _make_query(self, max_query_length=3000):
         with open(self.mutation_data_filepath, 'r') as file:
             lines = [line.strip() for line in file.readlines()]
-        query = ' || '.join([f'domain:{line}' for line in lines])
-        return query
+
+        result = []
+        current_string = ""
+
+        for line in lines:
+            part = f'domain:{line}'
+            if len(current_string) + len(part) + len(" || ") > max_query_length:
+                result.append(current_string[:-4])
+                current_string = part + " || "
+            else:
+                current_string += part + " || "
+
+        if current_string:
+            result.append(current_string[:-4])
+
+        return result
 
     # Executes a query to Netlas, saves the response to dst_filepath
     def search_mutation_domains(self, dst_filepath='output_file.json', fields=None):
@@ -40,14 +54,16 @@ class DomainMutation:
         netlas_connection = netlas.Netlas(api_key=apikey)
         for domain in self.domain_list:
             self._mutate_domain(domain)
-            query = self._make_query()
-            count = netlas_connection.count(datatype='domain',
-                                            query=query)['count']
-            iterator_of_bytes = netlas_connection.download(datatype='domain',
-                                                           query=query,
-                                                           fields=fields,
-                                                           size=count)
-            write_bytes_to_file(iterator_of_bytes, dst_filepath)
+            queries = self._make_query()
+            for query in queries:
+                count = netlas_connection.count(datatype='domain',
+                                                query=query)['count']
+                if count != 0:
+                    iterator_of_bytes = netlas_connection.download(datatype='domain',
+                                                                   query=query,
+                                                                   fields=fields,
+                                                                   size=count)
+                    write_bytes_to_file(iterator_of_bytes, dst_filepath)
 
 # Example:
 # mutation = DomainMutation([input_list])
