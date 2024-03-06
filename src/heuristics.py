@@ -1,6 +1,6 @@
 import dnstwist
 import netlas
-from os import remove
+from os import remove, path
 
 apikey = 'apikey'
 
@@ -19,7 +19,8 @@ class DomainMutation:
 
     # Gets a domain mutations list and saves in file
     def _mutate_domain(self, domain_name):
-        remove(self.mutation_data_filepath)
+        if(path.exists(self.mutation_data_filepath)):
+            remove(self.mutation_data_filepath)
         dnstwist.run(domain=domain_name, format='list',
                      output=self.mutation_data_filepath)
 
