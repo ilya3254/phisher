@@ -1,5 +1,5 @@
 import argparse
-import consoleout
+import cout
 import parse
 import heuristics
 
@@ -7,7 +7,7 @@ import heuristics
 is_verbose = False
 
 # Print utility wrapper
-consoleout.print_banner()
+cout.print_banner()
 
 # Processing command line arguments
 parser = argparse.ArgumentParser()
