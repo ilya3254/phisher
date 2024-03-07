@@ -1,7 +1,7 @@
 import argparse
 import cout
 import inparse
-import heuristics
+import dommut
 
 # Global constants
 is_verbose = False
@@ -34,6 +34,6 @@ percents = 0
 input_data = inparse.Inparse()
 input_data.magic(inparse.read(args.input_file))
 
-domain_mutation = heuristics.DomainMutation(input_data.domains, args.api_key)
+domain_mutation = dommut.DomainMutation(input_data.domains, args.api_key)
 domain_mutation.search_mutation_domains(percents)
 
