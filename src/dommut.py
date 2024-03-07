@@ -68,7 +68,8 @@ class DomainMutation:
 
 
     # Executes a query to Netlas, saves the response to dst_filepath
-    def search_mutation_domains(self, percents, dst_filepath="output_file.json", fields=None):
+    def search_mutation_domains(self, percents, 
+                                dst_filepath="output_file.json", fields=None):
         print_percents(percents)
         # Clear file
         with open(dst_filepath, "wb") as file:
