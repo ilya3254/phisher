@@ -11,7 +11,7 @@ def read(file):
         abort()
 
 
-class Parse:
+class Inparse:
     def __init__(self):
         self.domains = None
         self.sertificates = None

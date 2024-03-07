@@ -2,7 +2,11 @@ import dnstwist
 import netlas
 from os import remove, path
 from time import sleep
+from cout import print_percents
 
+
+
+percents_inc = 0
 
 def write_bytes_to_file(iterator, filepath):
     with open(filepath, 'ab') as file:
@@ -54,15 +58,25 @@ class DomainMutation:
         return result
 
     # Executes a query to Netlas, saves the response to dst_filepath
-    def search_mutation_domains(self, dst_filepath='output_file.json', fields=None):
+    def search_mutation_domains(self, percents, dst_filepath='output_file.json', fields=None):
+        print_percents(percents)
         # Clear file
         with open(dst_filepath, 'wb') as file:
             pass
         # Create connection to Netlas
         netlas_connection = netlas.Netlas(api_key=self.api_key)
+
+        # Counts percent from processing of one domain
+        domain_percents = 100 / len(self.domain_list)
+
+        # Domains processing
         for domain in self.domain_list:
             self._mutate_domain(domain)
             queries = self._make_query()
+
+            # Counts percent increment on every loop step
+            percents_inc = domain_percents / len(queries)
+            
             for query in queries:
                 count = netlas_connection.count(datatype='domain',
                                                 query=query)['count']
@@ -72,6 +86,11 @@ class DomainMutation:
                                                                    fields=fields,
                                                                    size=count)
                     write_bytes_to_file(iterator_of_bytes, dst_filepath)
+
+                # Print percents 
+                percents += percents_inc
+                print_percents(percents)
+                # Delay for netlas requests
                 sleep(0.5)
 
 # Example:

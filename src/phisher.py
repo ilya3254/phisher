@@ -1,6 +1,6 @@
 import argparse
 import cout
-import parse
+import inparse
 import heuristics
 
 # Global constants
@@ -29,11 +29,11 @@ else:
     is_verbose = False
     print("Processing in normal mode...")
 
-
+percents = 0
 # Processing
-input_data = parse.Parse()
-input_data.magic(parse.read(args.input_file))
+input_data = inparse.Inparse()
+input_data.magic(inparse.read(args.input_file))
 
 domain_mutation = heuristics.DomainMutation(input_data.domains, args.api_key)
-domain_mutation.search_mutation_domains()
+domain_mutation.search_mutation_domains(percents)
 
