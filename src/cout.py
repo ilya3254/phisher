@@ -25,7 +25,7 @@ def print_banner():
     print("\033[8B\033[80D")
 
     # Print referece
-    print("\033[1m"+"    Usage: python phisher.py [options] [input_file]\n")
+    print("\033[1m"+"    Usage: python phisher.py [options] [input_file] [api_key]\n")
 
 
 # Counts down the percentage and outputs it to the console

@@ -91,7 +91,7 @@ class DomainMutation:
                 percents += percents_inc
                 print_percents(percents)
                 # Delay for netlas requests
-                sleep(0.5)
+                sleep(1)
 
 # Example:
 # mutation = DomainMutation([input_list])
