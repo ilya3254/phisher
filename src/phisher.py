@@ -32,7 +32,7 @@ else:
 percents = 0
 # Processing
 input_data = inparse.Inparse()
-input_data.magic(inparse.read(args.input_file))
+input_data.parse(inparse.read(args.input_file))
 
 domain_mutation = dommut.DomainMutation(input_data.domains, args.api_key)
 domain_mutation.search_mutation_domains(percents)
