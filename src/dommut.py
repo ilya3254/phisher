@@ -45,6 +45,7 @@ class DomainMutation:
         
         prepare_mutation_file(self.mutation_data_filepath)
 
+
     # Generates a query with domain mutations like "domain:x.com || domain:y.com"
     def _make_query(self, max_query_length=3000):
         with open(self.mutation_data_filepath, "r") as file:
