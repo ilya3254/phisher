@@ -14,9 +14,9 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("input_file", help="file with resources")
 parser.add_argument("api_key", help="personal API key")
-parser.add_argument("-v", "--verbose", help="run in verbose mode", 
-                     action="store_true")
-parser.add_argument("-n", "--normal", help="run in normal mode", 
+parser.add_argument("-v", "--verbose", help="run in verbose mode",
+                    action="store_true")
+parser.add_argument("-n", "--normal", help="run in normal mode",
                     action="store_true")
 
 args = parser.parse_args()

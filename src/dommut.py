@@ -9,12 +9,16 @@ percents_inc = 0
 
 ''' FILE FUNCTIONS '''
 # Writes bytes to file
+
+
 def write_bytes_to_file(iterator, filepath):
     with open(filepath, "ab") as file:
         for chunk in iterator:
             file.write(chunk)
 
 # Prepares domina_mutations file
+
+
 def prepare_mutation_file(filepath):
     # Deletes first string from domain_mutations file
     f = open(filepath).readlines()
@@ -23,7 +27,7 @@ def prepare_mutation_file(filepath):
     for line in range(len(f)):
         f[line] = f[line].replace("com", "*")
     # Saves modify file
-    with open(filepath,"w") as modf:
+    with open(filepath, "w") as modf:
         modf.writelines(f)
 
 
@@ -33,20 +37,20 @@ class DomainMutation:
         self.mutation_data_filepath = "domain_mutations.txt"
         self.api_key = api_key
 
-     # Gets a domain mutations list and saves in file
+    # Gets a domain mutations list and saves in file
     def _mutate_domain(self, domain_name):
         # Delete previous domain_mutations file
-        if(path.exists(self.mutation_data_filepath)):
+        if path.exists(self.mutation_data_filepath):
             remove(self.mutation_data_filepath)
 
         # Mutate and saves in domain_mutations file
         dnstwist.run(domain=domain_name, format="list",
                      output=self.mutation_data_filepath)
-        
+
         prepare_mutation_file(self.mutation_data_filepath)
 
-
     # Generates a query with domain mutations like "domain:x.com || domain:y.com"
+
     def _make_query(self, max_query_length=3000):
         with open(self.mutation_data_filepath, "r") as file:
             lines = [line.strip() for line in file.readlines()]
@@ -67,9 +71,8 @@ class DomainMutation:
 
         return result
 
-
     # Executes a query to Netlas, saves the response to dst_filepath
-    def search_mutation_domains(self, percents, 
+    def search_mutation_domains(self, percents,
                                 dst_filepath="output_file.json", fields=None):
         print_percents(percents)
         # Clear file
@@ -88,7 +91,7 @@ class DomainMutation:
 
             # Counts percent increment on every loop step
             percents_inc = domain_percents / len(queries)
-            
+
             for query in queries:
                 count = netlas_connection.count(datatype="domain",
                                                 query=query)["count"]
@@ -99,7 +102,7 @@ class DomainMutation:
                                                                    size=count)
                     write_bytes_to_file(iterator_of_bytes, dst_filepath)
 
-                # Print percents 
+                # Print percents
                 percents += percents_inc
                 print_percents(percents)
                 # Delay for netlas requests
