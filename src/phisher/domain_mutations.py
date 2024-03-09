@@ -2,23 +2,23 @@ import dnstwist
 import netlas
 from os import remove, path
 from time import sleep
-from cout import print_percents
+from console_output import print_percents
 
-# Precent increment
+# Percent increment
 percents_inc = 0
 
+
 ''' FILE FUNCTIONS '''
+
+
 # Writes bytes to file
-
-
 def write_bytes_to_file(iterator, filepath):
     with open(filepath, "ab") as file:
         for chunk in iterator:
             file.write(chunk)
 
-# Prepares domina_mutations file
 
-
+# Prepares domain_mutations file
 def prepare_mutation_file(filepath):
     # Deletes first string from domain_mutations file
     f = open(filepath).readlines()
@@ -31,7 +31,7 @@ def prepare_mutation_file(filepath):
         modf.writelines(f)
 
 
-class DomainMutation:
+class DomainMutations:
     def __init__(self, input_list, api_key):
         self.domain_list = input_list
         self.mutation_data_filepath = "domain_mutations.txt"
@@ -77,6 +77,7 @@ class DomainMutation:
     # Executes a query to Netlas, saves the response to dst_filepath
     def search_mutation_domains(self, percents,
                                 dst_filepath="output_file.json", fields=None):
+        global percents_inc
         print_percents(percents)
         # Clear file
         with open(dst_filepath, "wb") as file:
