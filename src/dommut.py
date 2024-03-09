@@ -49,25 +49,28 @@ class DomainMutation:
 
         prepare_mutation_file(self.mutation_data_filepath)
 
-    # Generates a query with domain mutations like "domain:x.com || domain:y.com"
-
-    def _make_query(self, max_query_length=3000):
+    # Generates a query list with domain mutations like "domain:x.com || domain:y.com"
+    # with maximum query operands 25
+    def _make_query(self, max_query_operands=25):
         with open(self.mutation_data_filepath, "r") as file:
             lines = [line.strip() for line in file.readlines()]
 
         result = []
         current_string = ""
+        current_operands = 0
 
         for line in lines:
             part = f"domain:{line}"
-            if len(current_string) + len(part) + len(" || ") > max_query_length:
-                result.append(current_string[:-4])
+            if current_operands >= max_query_operands:
+                result.append(current_string[:-4])  # remove " || "
                 current_string = part + " || "
+                current_operands = 1
             else:
                 current_string += part + " || "
+                current_operands += 1
 
         if current_string:
-            result.append(current_string[:-4])
+            result.append(current_string[:-4])  # remove " || "
 
         return result
 
