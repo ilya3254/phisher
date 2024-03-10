@@ -5,12 +5,13 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-buster",
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip install netlas dnstwist pycodestyle colorama",
+	"postCreateCommand": "pip install netlas dnstwist colorama",
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"GitHub.copilot",
-				"GitHub.copilot-chat"
+				"GitHub.copilot-chat",
+				"charliermarsh.ruff"
 			]
 		}
 	}
