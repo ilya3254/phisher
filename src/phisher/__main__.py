@@ -1,3 +1,4 @@
+import netlas
 import argparse
 import console_output
 import inparse
@@ -6,6 +7,7 @@ import domain_mutations
 # Global constants
 is_verbose = False
 
+global netlas_connection
 
 def main():
     global is_verbose
@@ -36,6 +38,9 @@ def main():
     # Processing
     input_data = inparse.Inparse()
     input_data.parse(inparse.read(args.input_file))
+
+    global netlas_connection
+    netlas_connection = netlas.Netlas(api_key=args.api_key)
 
     domain_mutation = domain_mutations.DomainMutations(input_data.domains, args.api_key)
     domain_mutation.search_mutation_domains(percents)
