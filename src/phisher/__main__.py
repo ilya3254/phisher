@@ -1,3 +1,4 @@
+import netlas
 import argparse
 import console_output
 import inparse
@@ -5,7 +6,6 @@ import domain_mutations
 
 # Global constants
 is_verbose = False
-
 
 def main():
     global is_verbose
@@ -36,6 +36,9 @@ def main():
     # Processing
     input_data = inparse.Inparse()
     input_data.parse(inparse.read(args.input_file))
+    # лучше инициировать подключение с апи ключом сразу, 
+    # а модулям передавать готовый Netlas объект
+    #netlas_connection = netlas.Netlas(api_key=args.api_key)
 
     domain_mutation = domain_mutations.DomainMutations(input_data.domains, args.api_key)
     domain_mutation.search_mutation_domains(percents)
