@@ -7,8 +7,6 @@ import domain_mutations
 # Global constants
 is_verbose = False
 
-global netlas_connection
-
 def main():
     global is_verbose
     # Print utility wrapper
