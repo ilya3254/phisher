@@ -1,8 +1,8 @@
 import netlas
 import argparse
-import console_output
+import cout
 import inparse
-import domain_mutations
+import domut
 
 # Global constants
 is_verbose = False
@@ -10,7 +10,7 @@ is_verbose = False
 def main():
     global is_verbose
     # Print utility wrapper
-    console_output.print_banner()
+    cout.print_banner()
 
     # Processing command line arguments
     parser = argparse.ArgumentParser()
@@ -40,7 +40,7 @@ def main():
     # а модулям передавать готовый Netlas объект
     #netlas_connection = netlas.Netlas(api_key=args.api_key)
 
-    domain_mutation = domain_mutations.DomainMutations(input_data.domains, args.api_key)
+    domain_mutation = domut.DomainMutations(input_data.domains, args.api_key)
     domain_mutation.search_mutation_domains(percents)
 
 
