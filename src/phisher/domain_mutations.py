@@ -1,113 +1,84 @@
+import re
+import json
 import dnstwist
-import netlas
+from netlas import Netlas
 from os import remove, path
 from time import sleep
-from console_output import print_percents
-
-# Percent increment
-percents_inc = 0
 
 
-''' FILE FUNCTIONS '''
-
-
-# Writes bytes to file
-def write_bytes_to_file(iterator, filepath):
-    with open(filepath, "ab") as file:
-        for chunk in iterator:
-            file.write(chunk)
-
-
-# Prepares domain_mutations file
-def prepare_mutation_file(filepath):
-    # Deletes first string from domain_mutations file
-    f = open(filepath).readlines()
-    f.pop(0)
-    # Replaces 'com' end of string on '*'
-    for line in range(len(f)):
-        f[line] = f[line].replace("com", "*")
-    # Saves modify file
-    with open(filepath, "w") as modf:
-        modf.writelines(f)
+def parse_jsons(json_string):
+    json_string = '[' + json_string.replace('}{', '},{') + ']'
+    return json.loads(json_string)
 
 
 class DomainMutations:
-    def __init__(self, input_list, api_key):
-        self.domain_list = input_list
-        self.mutation_data_filepath = "domain_mutations.txt"
-        self.api_key = api_key
+    def __init__(self, netlas_connection: Netlas) -> None:
+        self.netlas_connection = netlas_connection
 
-    # Gets a domain mutations list and saves in file
-    def _mutate_domain(self, domain_name):
+    # TO DO: Make the file saved in a specific "tmp" directory
+    # Returns a domain mutations list.
+    @staticmethod
+    def _mutate_domain(domain_name, tmp_file="domain_mutations.tmp"):
         # Delete previous domain_mutations file
-        if path.exists(self.mutation_data_filepath):
-            remove(self.mutation_data_filepath)
-
+        if path.exists(tmp_file):
+            remove(tmp_file)
         # Mutate and saves in domain_mutations file
         dnstwist.run(domain=domain_name, format="list",
-                     output=self.mutation_data_filepath)
+                     output=tmp_file)
+        # Extract mutations from file
+        with open(tmp_file, 'r') as file:
+            mutations = file.readlines()
+        mutations.pop(0)
+        for i in range(len(mutations)):
+            mutations[i] = re.sub(r'\.[^.]*$', '.*', mutations[i])
+        return mutations
 
-        prepare_mutation_file(self.mutation_data_filepath)
-
-    # Generates a query list with domain mutations like "domain:x.com || domain:y.com"
-    # with maximum query operands 25
-    def _make_query(self, max_query_operands=25):
-        with open(self.mutation_data_filepath, "r") as file:
-            lines = [line.strip() for line in file.readlines()]
-
-        result = []
-        current_string = ""
+    # Generates a query list with domain mutations like "domain:(example.* || another.*) level:2"
+    # with maximum query operands '||' 100 by default
+    @staticmethod
+    def _make_query(mutations, max_query_operands=100):
+        queries = []
+        current_string = "domain:("
         current_operands = 0
-
-        for line in lines:
-            part = f"domain:{line}"
+        for mutation in mutations:
+            part = f"{mutation}"
             if current_operands >= max_query_operands:
-                result.append(current_string[:-4])  # remove " || "
-                current_string = part + " || "
+                queries.append(current_string[:-4] + ") level:2")  # remove " || " and add ") level:2"
+                current_string = "domain:(" + part + " || "
                 current_operands = 1
             else:
                 current_string += part + " || "
                 current_operands += 1
-
         if current_string:
-            result.append(current_string[:-4])  # remove " || "
+            queries.append(current_string[:-4] + ") level:2")  # remove " || " and add ") level:2"
+        return queries
 
-        return result
-
-    # Executes a query to Netlas, saves the response to dst_filepath
-    def search_mutation_domains(self, percents,
-                                dst_filepath="output_file.json", fields=None):
-        global percents_inc
-        print_percents(percents)
-        # Clear file
-        with open(dst_filepath, "wb") as file:
-            pass
-        # Create connection to Netlas
-        netlas_connection = netlas.Netlas(api_key=self.api_key)
-
-        # Counts percent from processing of one domain
-        domain_percents = 100 / len(self.domain_list)
-
-        # Domains processing
-        for domain in self.domain_list:
-            self._mutate_domain(domain)
-            queries = self._make_query()
-
-            # Counts percent increment on every loop step
-            percents_inc = domain_percents / len(queries)
-
+    # ATTENTION: Parsing response from Netlas can take a long time! Therefore, we need to be smart about implementing a 1 second delay for requests.
+    # TO DO: Check to see if they belong to the perimeter and exclude such domains. For example domain!=*.example.com AND domain!=example.com.
+    # Executes a query to Netlas, returns the domain list
+    def search(self, domains):
+        results = []
+        for domain in domains:
+            mutations = self._mutate_domain(domain)
+            queries = self._make_query(mutations=mutations)
             for query in queries:
-                count = netlas_connection.count(datatype="domain",
-                                                query=query)["count"]
+                count = self.netlas_connection.count(datatype="domain",
+                                                     query=query)['count']
                 if count != 0:
-                    iterator_of_bytes = netlas_connection.download(datatype="domain",
-                                                                   query=query,
-                                                                   fields=fields,
-                                                                   size=count)
-                    write_bytes_to_file(iterator_of_bytes, dst_filepath)
-
-                # Print percents
-                percents += percents_inc
-                print_percents(percents)
-                # Delay for netlas requests
+                    iterator_of_bytes = self.netlas_connection.download(datatype="domain",
+                                                                        query=query,
+                                                                        fields="domain",
+                                                                        size=count)
+                    response = parse_jsons(b"".join(iterator_of_bytes).decode("utf-8"))
+                    # saving domain field in the result list by default
+                    for item in response:
+                        results.append(item['data']['domain'])
                 sleep(1)
+        return results
+
+# Example for debugging
+if __name__ == "__main__":
+    netlas_connection = Netlas(api_key="apikey")
+    mutations = DomainMutations(netlas_connection)
+    domains = mutations.search(domains=["netlas.io"])
+    print(domains)

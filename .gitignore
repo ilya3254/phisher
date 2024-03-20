@@ -3,6 +3,7 @@
 
 __pycache__
 domain_mutations.txt
+domain_mutations.tmp
 output_file.json
 
 output/
