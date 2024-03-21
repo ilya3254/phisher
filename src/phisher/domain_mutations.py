@@ -18,7 +18,7 @@ class DomainMutations:
     # TO DO: Make the file saved in a specific "tmp" directory
     # Returns a domain mutations list.
     @staticmethod
-    def _mutate_domain(domain_name, tmp_file="domain_mutations.tmp"):
+    def _mutate_domain(domain_name: str, tmp_file="domain_mutations.tmp") -> list:
         # Delete previous domain_mutations file
         if path.exists(tmp_file):
             remove(tmp_file)
@@ -36,7 +36,7 @@ class DomainMutations:
     # Generates a query list with domain mutations like "domain:(example.* || another.*) level:2"
     # with maximum query operands '||' 100 by default
     @staticmethod
-    def _make_query(mutations, max_query_operands=100):
+    def _make_query(mutations: list, max_query_operands=100) -> list:
         queries = []
         current_string = "domain:("
         current_operands = 0
@@ -56,7 +56,7 @@ class DomainMutations:
     # ATTENTION: Parsing response from Netlas can take a long time! Therefore, we need to be smart about implementing a 1 second delay for requests.
     # TO DO: Check to see if they belong to the perimeter and exclude such domains. For example domain!=*.example.com AND domain!=example.com.
     # Executes a query to Netlas, returns the domain list
-    def search(self, domains):
+    def search(self, domains: list) -> list:
         results = []
         for domain in domains:
             mutations = self._mutate_domain(domain)
