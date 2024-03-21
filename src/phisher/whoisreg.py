@@ -8,10 +8,12 @@ def parse_jsons(json_string):
     return json.loads(json_string)
 
 
+# Heuristics are needed to identify legitimate resources obtained.
 class WhoisRegistration():
     def __init__(self, netlas_connection: Netlas) -> None:
         self.netlas_connection = netlas_connection
 
+    # Returns two lists: correct and incorrect resources - according to the received registration data.
     def search(self, domains: list, org_name: list) -> list:
         correct_domains = []    # domains that match the registration data
         wrong_domains = []      # domains that don't match the registration data
@@ -24,6 +26,8 @@ class WhoisRegistration():
                 # saving domain field in the list by default
                 bytes_data = b"".join(iterator)
                 results = parse_jsons(bytes_data.decode("utf-8"))
+                # for every domain check registrant data
+                # To do: put the verification of registration data in a separate procedure
                 for response in results:
                     for name in org_name:
                         if 'registrant' in response['data'] and 'organization' in response['data']['registrant']:
