@@ -17,28 +17,30 @@ class Subdomains():
     def _make_query(name: str, max_level: int) -> str:
         return f"domain:{name}.* level:[3 TO {max_level}]"
 
+    # ATTENTION: Parsing response from Netlas can take a long time! Therefore, we need to be smart about implementing a 1 second delay for requests.
+    # TO DO: Check to see if they belong to the perimeter and exclude such domains. For example domain!=*.example.com AND domain!=example.com.
     def search(self, names: list, max_level: int=4) -> list:
-        domains = []
+        results = []
         for name in names:
             query = self._make_query(name, max_level)
             count = self.netlas_connection.count(datatype="domain",
-                                            query=query)['count']
+                                                 query=query)['count']
             if count != 0:
                 iterator_of_bytes = self.netlas_connection.download(datatype="domain",
-                                                               query=query,
-                                                               size=count)
+                                                                    query=query,
+                                                                    fields="domain",
+                                                                    size=count)
+                response = parse_jsons(b"".join(iterator_of_bytes).decode("utf-8"))
                 # saving domain field in the list by default
-                bytes_data = b"".join(iterator_of_bytes)
-                results = parse_jsons(bytes_data.decode("utf-8"))
-                for item in results:
-                    domains.append(item['data']['domain'])
+                for item in response:
+                    results.append(item['data']['domain'])
             sleep(1)
-        return domains
+        return results
 
 
 # Example for debugging
 if __name__ == "__main__":
-    netlas_connection = Netlas(api_key='apikey')
+    netlas_connection = Netlas(api_key="apikey")
     SubdomainS = Subdomains(netlas_connection)
     domains = SubdomainS.search(names=["vkontakte"])
     print(domains)
