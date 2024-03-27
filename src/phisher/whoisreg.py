@@ -13,7 +13,7 @@ def parse_jsons(json_string):
 class WhoisIdentification():
     def __init__(self, netlas_connection: Netlas) -> None:
         self.netlas_connection = netlas_connection
-        
+
     def _check_registration_data(self, data: dict, org_data: dict) -> bool:
         # Check if registrant organization matches any of the specified organization names
         if 'registrant' in data and 'organization' in data['registrant']:
@@ -32,8 +32,8 @@ class WhoisIdentification():
                     return True
         return False
 
-
     # Returns two lists: correct and incorrect resources - according to the received registration data.
+
     def search(self, domains: list, org_data: dict) -> Tuple[list, list]:
         correct_domains = []    # domains that match the registration data
         wrong_domains = []      # domains that don't match the registration data
@@ -53,7 +53,8 @@ class WhoisIdentification():
                             wrong_domains.append(result['data']['domain'])
             sleep(1)
         return correct_domains, wrong_domains
-    
+
+
 # Example for debugging
 donain_mutations = ["vkontakte.*"]
 whoisreg = {"organisation": ["LLC \"V Kontakte\"", "V Kontakte LLC"],
@@ -63,5 +64,6 @@ whoisreg = {"organisation": ["LLC \"V Kontakte\"", "V Kontakte LLC"],
 if __name__ == "__main__":
     netlas_connection = Netlas(api_key='1CNI8pZAx3vYWfJqaD74fEc1cSi5KsTW')
     registrant = WhoisIdentification(netlas_connection)
-    correct_domains, wrong_domains = registrant.search(domains=donain_mutations , org_data=whoisreg)
+    correct_domains, wrong_domains = registrant.search(
+        domains=donain_mutations, org_data=whoisreg)
     print(correct_domains, wrong_domains)
