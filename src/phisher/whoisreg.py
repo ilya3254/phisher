@@ -13,6 +13,25 @@ def parse_jsons(json_string):
 class WhoisIdentification():
     def __init__(self, netlas_connection: Netlas) -> None:
         self.netlas_connection = netlas_connection
+        
+    def check_registration_data(self, data: dict, org_name: dict) -> bool:
+    # Check if registrant organization matches any of the specified organization names
+    if 'registrant' in data and 'organization' in data['registrant']:
+        for name in org_name.get("organisation", []):
+            if data['registrant']['organization'] == name:
+                return True
+    # Check if registrant phone matches any of the specified phone numbers
+    if 'registrant' in data and 'phone' in data['registrant']:
+        for phone in org_name.get("phone", []):
+            if data['registrant']['phone'] == phone:
+                return True
+    # Check if registrant email matches any of the specified email addresses
+    if 'registrant' in data and 'email' in data['registrant']:
+        for email in org_name.get("email", []):
+            if data['registrant']['email'] == email:
+                return True
+    return False
+
 
     # Returns two lists: correct and incorrect resources - according to the received registration data.
     def search(self, domains: list, org_name: dict) -> Tuple[list, list]:
