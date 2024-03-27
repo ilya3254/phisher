@@ -27,7 +27,12 @@ class WhoisIdentification():
                 bytes_data = b"".join(iterator)
                 results = parse_jsons(bytes_data.decode("utf-8"))
                 # for every domain check registrant data
-                # To do: put the verification of registration data in a separate procedure
+                
+                # 1. Переделать функцию проверки: нужно чтобы проверял на совпадение с полями словаря,
+                #                                 которые заданы пользователем.
+                # 2. Убрать дублирование записей в списке wrong_domains
+                # 3. Проверить типы!!
+                # 4. Добавлять в список входных словарей список доменов из периметра, т.к. они тоже могут давать результат
                 for result in results:
                     if 'registrant' in result['data'] and 'organization' in result['data']['registrant']:
                         for name in org_name:
