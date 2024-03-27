@@ -43,25 +43,16 @@ class WhoisIdentification():
             if count != 0:
                 iterator = self.netlas_connection.download(datatype="whois-domain",
                                                            query=domain, size=count)
-                # saving domain field in the list by default
                 bytes_data = b"".join(iterator)
                 results = parse_jsons(bytes_data.decode("utf-8"))
-                # for every domain check registrant data
-                
-                # 1. Переделать функцию проверки: нужно чтобы проверял на совпадение с полями словаря,
-                #                                 которые заданы пользователем.
-                # 2. Убрать дублирование записей в списке wrong_domains
-                # 3. Добавлять в список входных словарей список доменов из периметра, т.к. они тоже могут давать результат
                 for result in results:
-                    if 'registrant' in result['data'] and 'organization' in result['data']['registrant']:
-                        for name in org_name:
-                            if result['data']['registrant']['organization'] == name:
-                                correct_domains.append(result['data']['domain'])
+                    if self.check_registration_data(result['data'], org_name):
+                        correct_domains.append(result['data']['domain'])
                     else:
-                        wrong_domains.append(result['data']['domain'])
+                        if result['data']['domain'] not in wrong_domains:
+                            wrong_domains.append(result['data']['domain'])
             sleep(1)
         return correct_domains, wrong_domains
-
     
 # Example for debugging
 donain_mutations = ["vkontakte.*"]
