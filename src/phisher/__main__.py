@@ -2,7 +2,7 @@ import netlas
 import argparse
 import cout
 import inparse
-import domut
+import domainmut
 
 # Global constants
 is_verbose = False
@@ -40,7 +40,7 @@ def main():
     # а модулям передавать готовый Netlas объект
     #netlas_connection = netlas.Netlas(api_key=args.api_key)
 
-    domain_mutation = domut.DomainMutations(input_data.domains, args.api_key)
+    domain_mutation = domainmut.DomainMutations(input_data.domains, args.api_key)
     domain_mutation.search_mutation_domains(percents)
 
 
