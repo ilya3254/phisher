@@ -17,9 +17,9 @@ class Subdomains():
     def _make_query(name: str, legit_domains_exception: str, max_level: int) -> str:
         return f"domain:{name}.* level:[3 TO {max_level}] " + legit_domains_exception
 
-    def search(self, names: list, legit_domains: list, max_level: int=4) -> list:
+    def search(self, names: list, legit_topdomains: list, max_level: int=4) -> list:
         domains = []
-        legit_domains_exception = "!domain:(" + " || ".join([f"*.{domain}" for domain in legit_domains]) + ")"
+        legit_domains_exception = "!domain:(" + " || ".join([f"*.{domain}" for domain in legit_topdomains]) + ")"
         for name in names:
             query = self._make_query(name, legit_domains_exception, max_level)
             count = self.netlas_connection.count(datatype="domain",
@@ -41,5 +41,5 @@ class Subdomains():
 if __name__ == "__main__":
     netlas_connection = Netlas(api_key='api_key')
     SubdomainS = Subdomains(netlas_connection)
-    domains = SubdomainS.search(names=["habr"], legit_domains=["habrastorage.org", "habratest.net"])
+    domains = SubdomainS.search(names=["habr"], legit_topdomains=["habrastorage.org", "habratest.net", "msk.cloud-ix.net"])
     print(domains)
