@@ -1,6 +1,7 @@
 import json
 from netlas import Netlas
 from time import sleep
+from typing import Tuple
 
 
 def parse_jsons(json_string):
@@ -14,7 +15,7 @@ class WhoisIdentification():
         self.netlas_connection = netlas_connection
 
     # Returns two lists: correct and incorrect resources - according to the received registration data.
-    def search(self, domains: list, org_name: dict) -> list:
+    def search(self, domains: list, org_name: dict) -> Tuple[list, list]:
         correct_domains = []    # domains that match the registration data
         wrong_domains = []      # domains that don't match the registration data
         for domain in domains:
@@ -31,8 +32,7 @@ class WhoisIdentification():
                 # 1. Переделать функцию проверки: нужно чтобы проверял на совпадение с полями словаря,
                 #                                 которые заданы пользователем.
                 # 2. Убрать дублирование записей в списке wrong_domains
-                # 3. Проверить типы!!
-                # 4. Добавлять в список входных словарей список доменов из периметра, т.к. они тоже могут давать результат
+                # 3. Добавлять в список входных словарей список доменов из периметра, т.к. они тоже могут давать результат
                 for result in results:
                     if 'registrant' in result['data'] and 'organization' in result['data']['registrant']:
                         for name in org_name:
@@ -46,7 +46,9 @@ class WhoisIdentification():
     
 # Example for debugging
 donain_mutations = ["vkontakte.*"]
-whoisreg = {"organisation": ["LLC \"V Kontakte\"", "V Kontakte LLC"]}
+whoisreg = {"organisation": ["LLC \"V Kontakte\"", "V Kontakte LLC"],
+            "email": [],
+            "phone": []}
 
 if __name__ == "__main__":
     netlas_connection = Netlas(api_key='1CNI8pZAx3vYWfJqaD74fEc1cSi5KsTW')
