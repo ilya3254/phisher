@@ -39,7 +39,8 @@ class Subdomains():
 
 # Example for debugging
 if __name__ == "__main__":
-    netlas_connection = Netlas(api_key='api_key')
+    netlas_connection = Netlas(api_key='apikey')
     SubdomainS = Subdomains(netlas_connection)
-    domains = SubdomainS.search(names=["habr"], legit_topdomains=["habrastorage.org", "habratest.net", "msk.cloud-ix.net"])
+    domains = SubdomainS.search(names=["bspb", "bank-spb", "bank-saint-petersburg"],
+                                legit_topdomains=["bspb.ru", "bspb-processing.ru", "ved-360.ru", "bspb.org", "bspb-redbreasts.org", "www.bspb.lt", "bspb-intl.com", "bspb.biz", "bspb.parts", "bspb.pl", "bspb-pkb.com", "bspb.net", "bspb-asso-bretagne.fr", "bspb.org", "adv.br"])
     print(domains)
