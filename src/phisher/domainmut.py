@@ -2,7 +2,7 @@ import dnstwist
 import netlas
 from os import remove, path
 from time import sleep
-from console_output import print_percents
+from cout import print_percents
 
 # Percent increment
 percents_inc = 0
