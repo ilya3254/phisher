@@ -1,6 +1,6 @@
 import netlas
 import argparse
-import console_output
+import cout
 import inparse
 import domain_mutations
 
@@ -10,7 +10,7 @@ is_verbose = False
 def main():
     global is_verbose
     # Print utility wrapper
-    console_output.print_banner()
+    cout.print_banner()
 
     # Processing command line arguments
     parser = argparse.ArgumentParser()
