@@ -12,10 +12,10 @@ class Subdomains():
     def __init__(self, netlas_connection: Netlas) -> None:
         self.netlas_connection = netlas_connection
         
-    """Generates query like "domain:<name>.* level:[3 TO max_level] !domain:(*.<legit_domain1> || *.<legit_domain2> || ...)"""
+    """Generates query like "domain:<name>.* level:[3 TO max_level] a:* !domain:(*.<legit_domain1> || *.<legit_domain2> || ...)"""
     @staticmethod
     def _make_query(name: str, legit_domains_exception: str, max_level: int) -> str:
-        return f"domain:{name}.* level:[3 TO {max_level}] " + legit_domains_exception
+        return f"domain:{name}.* level:[3 TO {max_level}] a:*" + legit_domains_exception
 
     # ATTENTION: Parsing response from Netlas can take a long time! Therefore, we need to be smart about implementing a 1 second delay for requests.
     # TO DO: Check to see if they belong to the perimeter and exclude such domains. For example domain!=*.example.com AND domain!=example.com.
