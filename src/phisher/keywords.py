@@ -6,10 +6,10 @@ class Keywords():
     def __init__(self, netlas_connection: Netlas) -> None:
         self.netlas_connection = netlas_connection
         
-    # Generates query like 'host:<domain> http.body:"<keyword>"' 
+    # Generates query like 'host:<domain> port:(443 || 80) path:"/" http.body:"<keyword>"'
     @staticmethod
     def _make_query(domain: str, keyword: str) -> str:
-        return f'host:{domain} http.body:"{keyword}"'
+        return f'host:{domain} port:(443 || 80) path:"/" http.body:"{keyword}"'
 
     # Takes a domain and a list of keywords.
     # Returns a dictionary where the keys are keywords and the values are the number of matches (0 or >=1).
