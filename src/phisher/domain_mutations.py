@@ -2,7 +2,7 @@ import re
 import json
 import dnstwist
 from netlas import Netlas
-from os import remove, path
+from os import remove, path, makedirs
 from time import sleep
 
 
@@ -19,16 +19,26 @@ class DomainMutations:
     # Returns a domain mutations list.
     @staticmethod
     def _mutate_domain(domain_name: str, tmp_file="domain_mutations.tmp") -> list:
+        # Создаем путь к временному каталогу в текущем рабочем каталоге
+        tmp_dir_path = path.join(path.dirname(__file__), "tmp")
+        
+        # Создаем каталог, если он не существует
+        makedirs(tmp_dir_path, exist_ok=True)
+        
+        # Полный путь к временному файлу
+        full_tmp_file_path = path.join(tmp_dir_path, tmp_file)
+
         # Delete previous domain_mutations file
-        if path.exists(tmp_file):
-            remove(tmp_file)
+        if path.exists(full_tmp_file_path):
+            remove(full_tmp_file_path)
         # Mutate and saves in domain_mutations file
         dnstwist.run(domain=domain_name, format="list",
-                     output=tmp_file)
+                     output=full_tmp_file_path)
         # Extract mutations from file
-        with open(tmp_file, 'r') as file:
+        with open(full_tmp_file_path, 'r') as file:
             mutations = file.readlines()
-        mutations.pop(0)
+        if mutations:
+            mutations.pop(0)
         for i in range(len(mutations)):
             mutations[i] = re.sub(r'\.[^.]*$', '.*', mutations[i])
         return mutations
@@ -78,7 +88,7 @@ class DomainMutations:
 
 # Example for debugging
 if __name__ == "__main__":
-    netlas_connection = Netlas(api_key="apikey")
+    netlas_connection = Netlas(api_key="-")
     mutations = DomainMutations(netlas_connection)
     domains = mutations.search(domains=["netlas.io"])
     print(domains)
