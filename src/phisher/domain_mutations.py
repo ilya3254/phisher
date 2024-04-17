@@ -2,7 +2,7 @@ import re
 import json
 import dnstwist
 from netlas import Netlas
-from os import remove, path
+from os import remove, path, makedirs
 from time import sleep
 
 
@@ -18,18 +18,23 @@ class DomainMutations:
     # TO DO: Make the file saved in a specific "tmp" directory
     # Returns a domain mutations list.
     @staticmethod
-    def _mutate_domain(domain_name: str, tmp_file="domain_mutations.tmp") -> list:
+    def _mutate_domain(domain_name: str) -> list:
+        tmp_dir_path = path.join(path.dirname(__file__), "tmp")
+        makedirs(tmp_dir_path, exist_ok=True)
+        tmp_path = path.join(tmp_dir_path, "domain_mutations.tmp")
+
         # Delete previous domain_mutations file
-        if path.exists(tmp_file):
-            remove(tmp_file)
+        if path.exists(tmp_path):
+            remove(tmp_path)
         # Mutate and saves in domain_mutations file
         dnstwist.run(domain=domain_name, format="list",
-                     output=tmp_file)
+                     output=tmp_path)
         # Extract mutations from file
-        with open(tmp_file, 'r') as file:
+        with open(tmp_path, 'r') as file:
             mutations = file.readlines()
-        mutations.pop(0)
-        for i in range(len(mutations)):
+        if mutations:
+            mutations[0] = mutations[0].strip() + '*'
+        for i in range(1, len(mutations)):
             mutations[i] = re.sub(r'\.[^.]*$', '.*', mutations[i])
         return mutations
 
@@ -38,7 +43,7 @@ class DomainMutations:
     @staticmethod
     def _make_query(mutations: list, max_query_operands=100) -> list:
         queries = []
-        current_string = "domain:("
+        current_string = "a:* domain:("
         current_operands = 0
         for mutation in mutations:
             part = f"{mutation}"
@@ -76,9 +81,10 @@ class DomainMutations:
                 sleep(1)
         return results
 
+
 # Example for debugging
 if __name__ == "__main__":
     netlas_connection = Netlas(api_key="apikey")
     mutations = DomainMutations(netlas_connection)
-    domains = mutations.search(domains=["netlas.io"])
+    domains = mutations.search(domains=["wildberries.ru"])
     print(domains)
