@@ -18,9 +18,8 @@ class FindLinks:
     
     # Function finds all links to images and icons present on the page and its subdomains.
     # Returns a list of image links and a list of icon links.
-    def check_resources(self, domain: str) -> tuple[list, list]:
-        available_images = set()
-        available_icons = set()
+    def check_resources(self, domain: str) -> list:
+        available_links = set()
 
         url = self._domain_to_url(domain)
         # Queue for traversing links on pages
@@ -35,14 +34,14 @@ class FindLinks:
             for image in images:
                 src = image['src']
                 full_src = urljoin(current_url, src)
-                available_images.add(full_src)
+                available_links.add(full_src)
 
             # Search for icons
             icons = soup.find_all('link', rel='icon')
             for icon in icons:
                 href = icon['href']
                 full_href = urljoin(current_url, href)
-                available_icons.add(full_href)
+                available_links.add(full_href)
 
             # Add links with subdomains to the queue
             subdomains = set()
@@ -58,11 +57,11 @@ class FindLinks:
                 if subdomain_url not in queue:  # Add the link to the queue if it's not there already
                     queue.append(subdomain_url)
                 
-        return list(available_images), list(available_icons)
+        return list(available_links)
 
 
 # Example for debug
 if __name__ == "__main__":
     domain = "bspb.ru"  # company domain
-    img_links, icons_links = FindLinks().check_resources(domain,)
-    print(img_links, icons_links)
+    links = FindLinks().check_resources(domain)
+    print(links)
