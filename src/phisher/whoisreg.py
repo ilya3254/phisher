@@ -1,8 +1,10 @@
 import json
 from time import sleep
-from typing import Tuple
 
 from netlas import Netlas
+
+from links_check import FindLinks
+from keywords import Keywords
 
 
 def parse_jsons(json_string):
@@ -35,9 +37,9 @@ class WhoisIdentification:
 
     # Returns two lists: correct and incorrect resources - according to the received registration data.
 
-    def search(self, domains: list, whois_data: dict) -> Tuple[list, list]:
-        correct_domains = []  # domains that match the registration data
-        wrong_domains = []  # domains that don't match the registration data
+    def search(self, domains: list, whois_data: dict) -> tuple[dict, dict]:
+        correct_domains = dict()  # domains that match the registration data
+        wrong_domains = dict()  # domains that don't match the registration data
         for domain in domains:
             count = self.netlas_connection.count(datatype="whois-domain", query=domain)["count"]
             if count != 0:
@@ -48,26 +50,56 @@ class WhoisIdentification:
                 results = parse_jsons(bytes_data.decode("utf-8"))
                 for result in results:
                     if self._check_registration_data(result["data"], whois_data):
-                        correct_domains.append(result["data"]["domain"])
+                        correct_domains[result["data"]["domain"]] = 0
                     else:
                         if result["data"]["domain"] not in wrong_domains:
-                            wrong_domains.append(result["data"]["domain"])
+                            wrong_domains[result["data"]["domain"]] = 1
             sleep(1)
         return correct_domains, wrong_domains
-
+    
+    # Evaluates pages of wrong domains for the occurrence of official images and keywords
+    # Returns a dict() of invalid domains with a criticality score (1 - 3)
+    @staticmethod
+    def domain_double_check(connection: any, true_links: list, keywords: list, wrong_domains: dict) -> dict:
+        for w_domain in wrong_domains:
+            try:
+                suspicious_links = FindLinks().check_resources(w_domain)
+                for link in suspicious_links:
+                    if link in true_links:
+                        wrong_domains[w_domain] += 1
+                        break
+            except:
+                None
+            occurrences = Keywords(connection).search(w_domain, keywords)
+            for occur in occurrences:
+                if occurrences[occur] > 0:
+                    wrong_domains[w_domain] += 1
+                    break
+        return wrong_domains
 
 # Example for debugging
-input_domains = ["vkontakte.*"]
+input_domains = ["bspb.*"]
 whoisreg = {
-    "organisation": ['LLC "V Kontakte"', "V Kontakte LLC"],
+    "organisation": ['PJSC "Bank "Saint-Petersburg"'],
     "email": [],
     "phone": [],
 }
 
 if __name__ == "__main__":
-    netlas_connection = Netlas(api_key="1CNI8pZAx3vYWfJqaD74fEc1cSi5KsTW")
+    netlas_connection = Netlas(api_key="5wKN7tr6dULDSLntT8Gq4LPxIT4Jq05b")
     registrant = WhoisIdentification(netlas_connection)
     correct_domains, wrong_domains = registrant.search(
         domains=input_domains, whois_data=whoisreg
     )
-    print(correct_domains, wrong_domains)
+    wrong_domains['bspb.ru'] = 1 # just for an example
+    print(wrong_domains)
+    
+    real_links = FindLinks().check_resources('bspb.ru')
+    wrong_domains = registrant.domain_double_check(
+        connection=netlas_connection,
+        true_links=real_links,
+        keywords=["Банк", "Банк Санкт-Петербург", "БСПБ"],
+        wrong_domains=wrong_domains
+    )
+    print(wrong_domains)
+    

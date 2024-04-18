@@ -26,7 +26,7 @@ class Keywords():
 
 # Example for debugging
 if __name__ == "__main__":
-    netlas_connection = Netlas(api_key="apikey")
+    netlas_connection = Netlas(api_key="5wKN7tr6dULDSLntT8Gq4LPxIT4Jq05b")
     KeywordS = Keywords(netlas_connection)
     result = KeywordS.search(domain="www.bspb.ru", keywords=["Банк", "Банк Санкт-Петербург", "БСПБ"])
     print(result)
