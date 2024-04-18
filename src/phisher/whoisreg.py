@@ -1,6 +1,5 @@
 import json
 from time import sleep
-from typing import Tuple
 
 from netlas import Netlas
 
@@ -38,7 +37,7 @@ class WhoisIdentification:
 
     # Returns two lists: correct and incorrect resources - according to the received registration data.
 
-    def search(self, domains: list, whois_data: dict) -> Tuple[dict, dict]:
+    def search(self, domains: list, whois_data: dict) -> tuple[dict, dict]:
         correct_domains = dict()  # domains that match the registration data
         wrong_domains = dict()  # domains that don't match the registration data
         for domain in domains:
