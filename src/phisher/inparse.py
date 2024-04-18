@@ -16,6 +16,7 @@ def read(file):
 class Inparse:
     def __init__(self):
         self.domains = list()
+        self.topdomains = list()
         self.brandnames = list()
         self.whois = dict()
         self.keywords = list()
@@ -27,6 +28,8 @@ class Inparse:
             match point:
                 case "domains":
                     self.domains = input_inf["domains"]
+                case "topdomains":
+                    self.topdomains = input_inf["topdomains"]
                 case "brandnames":
                     self.brandnames = input_inf["brandnames"]
                 case "whois":
@@ -37,8 +40,9 @@ class Inparse:
                     self.imglinks = input_inf["imglinks"]
                 # Other points ...
 
+
 if __name__ == "__main__":
-    file_name= input()
+    file_name = input()
     input_file = read(file_name)
     perimetr = Inparse()
     perimetr.parse(input_file)
