@@ -1,6 +1,6 @@
 {
     "domains": ["pochtabank.ru", "pochtabank.phx.media", "pochtabank.nalogia.ru"],
-    "topdomains": ["pochtabank.ru"],
+    "topdomains": ["pochtabank.ru", "phx.media", "nalogia.ru"],
     "brandnames": ["pochtabank", "pochta-bank", "postbank", "post-bank"],
     "whois": {
         "organization": ["SC \"Post Bank\""]
