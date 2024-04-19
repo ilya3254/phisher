@@ -1,40 +1,96 @@
-# Print utility wrapper
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich.table import Table
+from rich.progress import Progress
+from time import sleep
+
+console = Console()
+
+
 def print_banner():
-    import colorama
-
-    colorama.init(autoreset=True)
-
     # Write name of the utility
-    print("\n\033[33m\033[1m" + "\
-     /$$$$$$$  /$$   /$$ /$$$$$$  /$$$$$$  /$$   /$$ /$$$$$$$$ /$$$$$$$ \n\
-    | $$__  $$| $$  | $$|_  $$_/ /$$__  $$| $$  | $$| $$_____/| $$__  $$\n\
-    | $$  \\ $$| $$  | $$  | $$  | $$  \\__/| $$  | $$| $$      | $$  \\ $$\n\
-    | $$$$$$$/| $$$$$$$$  | $$  |  $$$$$$ | $$$$$$$$| $$$$$   | $$$$$$$/\n\
-    | $$____/ | $$__  $$  | $$   \\____  $$| $$__  $$| $$__/   | $$__  $$\n\
-    | $$      | $$  | $$  | $$   /$$  \\ $$| $$  | $$| $$      | $$  \\ $$\n\
-    | $$      | $$  | $$ /$$$$$$|  $$$$$$/| $$  | $$| $$$$$$$$| $$  | $$\n\
-    |__/      |__/  |__/|______/ \\______/ |__/  |__/|________/|__/  |__/")
+    banner = """
+██████╗░██╗░░██╗██╗░██████╗██╗░░██╗███████╗██████╗░
+██╔══██╗██║░░██║██║██╔════╝██║░░██║██╔════╝██╔══██╗
+██████╔╝███████║██║╚█████╗░███████║█████╗░░██████╔╝
+██╔═══╝░██╔══██║██║░╚═══██╗██╔══██║██╔══╝░░██╔══██╗
+██║░░░░░██║░░██║██║██████╔╝██║░░██║███████╗██║░░██║
+╚═╝░░░░░╚═╝░░╚═╝╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
+            """
+    banner_text = Text(banner, style="bold red", justify="center")
+    banner_panel = Panel(banner_text, title="Identify Phishing and Shadow-IT Resources",
+                         subtitle="[red]Stop Fraudulent Activities[/red]", width=80)
+    console.print(banner_panel)
 
-    # Positioning the cursor to display the utility version
+    # Display the utility version
     version = "1.0.1#dev"
-    print("\033[7A\033[80C\033[1m" + "{" + "\033[32m" + version + "\033[39m" + "}")
-    # Positioning the cursor to display the team name
-    print("\033[4B\033[80C\033[1m" + "Knights of the Round Table")
-    # Reset the cursor position
-    print("\033[8B\033[80D")
+    console.print(Text(f"Version: {version}",
+                  style="bold green", justify="center"))
 
-    # Print referece
-    print(
-        "\033[1m" + "    Usage: python phisher [options] [input_file] [api_key]\n")
+    # Display the team name
+    console.print(Text("Team: Knights of the Round Table",
+                  style="bold", justify="center"))
+
+    # Print reference
+    console.print(Text(
+        "Usage: python phisher [options] [input_file] [api_key]", style="bold", justify="center"))
 
 
-# Counts down the percentage and outputs it to the console
-def print_percents(cnt: int):
-    percents = "#" * 100
-    dots = "." * 100
-    if cnt != 100:
-        print("[" + percents[:cnt] + dots[cnt:] + "] " +
-              "\033[33m" + str(cnt) + "%", end="\r")
-    else:
-        print("[" + percents[:cnt] + dots[cnt:] +
-              "] " + "\033[33m" + str(cnt) + "%")
+def print_domains(domains_criticality=None):
+    if not domains_criticality:
+        domains_criticality = {
+            "example.com": "Legitimate",
+            "example.org": "Low",
+            "example.net": "Medium",
+            "example.edu": "High",
+            "example.gov": "Critical"
+        }
+
+    # Sort domains by criticality level
+    sorted_domains = sorted(domains_criticality.items(), key=lambda x: x[1])
+
+    # Determine maximum lengths for domain and criticality for proper table formatting
+    max_domain_length = max(len(domain) for domain, _ in sorted_domains)
+    max_column_length = max(max_domain_length, 10)
+
+    # Create a table with appropriate width and column formatting
+    table = Table(title="Domains List", style="cyan",
+                  title_style="bold", width=max_column_length * 2 + 10)
+    table.add_column("Domains", style="bold",
+                     width=max_column_length + 10, justify="center")
+    table.add_column("Criticality", style="bold",
+                     width=max_column_length + 10, justify="center")
+
+    # Map criticality values to color gradients
+    criticality_colors = {
+        "Legitimate": "green",
+        "Low": "blue",
+        "Medium": "cyan",
+        "High": "yellow",
+        "Critical": "red"
+    }
+
+    # Populate the table with domain-criticality pairs with colored text
+    for domain, criticality_value in sorted_domains:
+        criticality_label = f"[{criticality_colors[criticality_value]}]{criticality_value}[/]"
+        table.add_row(domain, criticality_label)
+
+    console.print(table)
+
+
+def print_percents(total: int):
+    with Progress() as progress:
+        task = progress.add_task("[yellow]Searching resources...", total=total)
+        while not progress.finished:
+            for i in range(1, total + 1):
+                progress.update(task, completed=i)
+                sleep(0.001)
+    console.print()
+
+
+# Example usage:
+print_banner()
+print()
+print_percents(100)
+print_domains()
