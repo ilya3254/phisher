@@ -34,7 +34,7 @@ def print_banner():
 
     # Print reference
     console.print(Text(
-        "Usage: python phisher [options] [input_file] [api_key]", style="bold", justify="center"))
+        "Usage: python phisher [input_file] [api_key]", style="bold", justify="center"))
 
 
 def print_domains(domains_criticality=None):
