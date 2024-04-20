@@ -85,7 +85,7 @@ def print_percents(total: int):
         while not progress.finished:
             for i in range(1, total + 1):
                 progress.update(task, completed=i)
-                sleep(0.001)
+                sleep(0.1)
     console.print()
 
 
