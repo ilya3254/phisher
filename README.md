@@ -1,2 +1,2 @@
-# PHISHER
-Development of tools for identifying resources such as “Phishing” and “Shadow IT”
+# PHISHER (рыбак рыбака)
+Development of tools for identifying resources such as “Phishing” and “Shadow-IT”
