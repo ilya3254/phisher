@@ -1,0 +1,18 @@
+{
+    "domains": ["pochtabank.ru", "pochtabank.phx.media", "pochtabank.nalogia.ru"],
+    "topdomains": ["pochtabank.ru", "phx.media", "nalogia.ru"],
+    "brandnames": ["pochtabank", "pochta-bank", "postbank", "post-bank"],
+    "whois": {
+        "organization": ["SC \"Post Bank\""]
+    },
+    "keywords": ["Почта Банк", "кредиты наличными", "дебетовые", "кредитные карты", "рефинансирование кредитов", "вклады", "ипотека", "банк", "почта", "деньги"],
+    "imglinks": [
+        "https://cdn.pochtabank.ru/_next/image?url=https://files.pochtabank.ru/medialibrary/9d2/9d225e46a593d636ec9737e2faa84f59/background_2901_24.jpg?id=52863&amp;w=640&amp;q=90 640w",
+        "https://cdn.pochtabank.ru/_next/image?url=https://files.pochtabank.ru/medialibrary/9d2/9d225e46a593d636ec9737e2faa84f59/background_2901_24.jpg?id=52863&amp;w=750&amp;q=90 750w",
+        "https://cdn.pochtabank.ru/_next/image?url=https://files.pochtabank.ru/medialibrary/9d2/9d225e46a593d636ec9737e2faa84f59/background_2901_24.jpg?id=52863&amp;w=828&amp;q=90 828w", 
+        "https://cdn.pochtabank.ru/_next/image?url=https://files.pochtabank.ru/medialibrary/9d2/9d225e46a593d636ec9737e2faa84f59/background_2901_24.jpg?id=52863&amp;w=1080&amp;q=90 1080w",
+        "https://cdn.pochtabank.ru/_next/image?url=https://files.pochtabank.ru/medialibrary/9d2/9d225e46a593d636ec9737e2faa84f59/background_2901_24.jpg?id=52863&amp;w=1200&amp;q=90 1200w",
+        "https://cdn.pochtabank.ru/_next/image?url=https://files.pochtabank.ru/medialibrary/9d2/9d225e46a593d636ec9737e2faa84f59/background_2901_24.jpg?id=52863&amp;w=1920&amp;q=90 1920w",
+        "https://cdn.pochtabank.ru/_next/image?url=https://files.pochtabank.ru/medialibrary/9d2/9d225e46a593d636ec9737e2faa84f59/background_2901_24.jpg?id=52863&amp;w=2048&amp;q=90 2048w"
+    ]
+}

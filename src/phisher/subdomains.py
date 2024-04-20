@@ -1,4 +1,5 @@
 import json
+from rich.progress import Progress
 from netlas import Netlas
 from time import sleep
 
@@ -22,20 +23,23 @@ class Subdomains():
     def search(self, names: list, legit_topdomains: list, max_level: int=4) -> list:
         domains = []
         legit_domains_exception = "!domain:(" + " || ".join([f"*.{domain}" for domain in legit_topdomains]) + ")"
-        for name in names:
-            query = self._make_query(name, legit_domains_exception, max_level)
-            count = self.netlas_connection.count(datatype="domain",
-                                                 query=query)['count']
-            if count != 0:
-                iterator_of_bytes = self.netlas_connection.download(datatype="domain",
-                                                                    query=query,
-                                                                    fields="domain",
-                                                                    size=count)
-                response = parse_jsons(b"".join(iterator_of_bytes).decode("utf-8"))
-                # saving domain field in the list by default
-                for item in response:
-                    domains.append(item['data']['domain'])
-            sleep(1)
+        with Progress() as progress:
+            total_task = progress.add_task("[red]Search for subdomains...", total=len(names))
+            for name in names:
+                query = self._make_query(name, legit_domains_exception, max_level)
+                count = self.netlas_connection.count(datatype="domain",
+                                                     query=query)['count']
+                if count != 0:
+                    iterator_of_bytes = self.netlas_connection.download(datatype="domain",
+                                                                        query=query,
+                                                                        fields="domain",
+                                                                        size=count)
+                    response = parse_jsons(b"".join(iterator_of_bytes).decode("utf-8"))
+                    # saving domain field in the list by default
+                    for item in response:
+                        domains.append(item['data']['domain'])
+                progress.update(total_task, advance=1)
+                sleep(1)
         return domains
 
 

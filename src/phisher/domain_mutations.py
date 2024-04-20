@@ -1,6 +1,7 @@
 import re
 import json
 import dnstwist
+from rich.progress import Progress
 from netlas import Netlas
 from os import remove, path, makedirs
 from time import sleep
@@ -63,22 +64,27 @@ class DomainMutations:
     # Executes a query to Netlas, returns the domain list
     def search(self, domains: list) -> list:
         results = []
-        for domain in domains:
-            mutations = self._mutate_domain(domain)
-            queries = self._make_query(mutations=mutations)
-            for query in queries:
-                count = self.netlas_connection.count(datatype="domain",
-                                                     query=query)['count']
-                if count != 0:
-                    iterator_of_bytes = self.netlas_connection.download(datatype="domain",
-                                                                        query=query,
-                                                                        fields="domain",
-                                                                        size=count)
-                    response = parse_jsons(b"".join(iterator_of_bytes).decode("utf-8"))
-                    # saving domain field in the result list by default
-                    for item in response:
-                        results.append(item['data']['domain'])
-                sleep(1)
+        with Progress() as progress:
+            total_task = progress.add_task("[red]Search for domain mutations...", total=len(domains))
+            for domain in domains:
+                mutations = self._mutate_domain(domain)
+                queries = self._make_query(mutations=mutations)
+                domain_task = progress.add_task(f"[green]Search for mutations for {domain}...", total=len(queries))
+                for query in queries:
+                    count = self.netlas_connection.count(datatype="domain",
+                                                         query=query)['count']
+                    if count != 0:
+                        iterator_of_bytes = self.netlas_connection.download(datatype="domain",
+                                                                            query=query,
+                                                                            fields="domain",
+                                                                            size=count)
+                        response = parse_jsons(b"".join(iterator_of_bytes).decode("utf-8"))
+                        # saving domain field in the result list by default
+                        for item in response:
+                            results.append(item['data']['domain'])
+                    progress.update(domain_task, advance=1)
+                    sleep(1)
+                progress.update(total_task, advance=1)
         return results
 
 

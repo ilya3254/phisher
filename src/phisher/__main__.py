@@ -3,45 +3,48 @@ import argparse
 import cout
 import inparse
 import domain_mutations
+import subdomains
+import keywords
 
-# Global constants
-is_verbose = False
 
 def main():
-    global is_verbose
-    # Print utility wrapper
-    cout.print_banner()
-
     # Processing command line arguments
     parser = argparse.ArgumentParser()
-
-    parser.add_argument("input_file", help="file with resources")
-    parser.add_argument("api_key", help="personal API key")
-    parser.add_argument("-v", "--verbose", help="run in verbose mode",
-                        action="store_true")
-    parser.add_argument("-n", "--normal", help="run in normal mode",
-                        action="store_true")
-
+    parser.add_argument("-p", "--perimeter", help="Path to file with perimeter data")
+    parser.add_argument("-a", "--apikey", help="Personal Netlas API key")
     args = parser.parse_args()
 
-    # Select console output mode
-    if args.verbose:
-        is_verbose = True
-        print("Processing in verbose mode...\n")
-    else:
-        is_verbose = False
-        print("Processing in normal mode...")
-
-    percents = 0
     # Processing
-    input_data = inparse.Inparse()
-    input_data.parse(inparse.read(args.input_file))
-    # лучше инициировать подключение с апи ключом сразу, 
-    # а модулям передавать готовый Netlas объект
-    #netlas_connection = netlas.Netlas(api_key=args.api_key)
+    perimeter = inparse.Inparse()
+    perimeter.parse(inparse.read(args.perimeter))
+    # модулям передается готовый инициализированный Netlas объект
+    netlas_connection = netlas.Netlas(api_key=args.apikey)
 
-    domain_mutation = domain_mutations.DomainMutations(input_data.domains, args.api_key)
-    domain_mutation.search_mutation_domains(percents)
+    potential_phishing = []
+
+    mutations = domain_mutations.DomainMutations(netlas_connection)
+    existing_mutdomains = mutations.search(domains=perimeter.domains)
+    potential_phishing.extend(existing_mutdomains)
+
+    SubdomainS = subdomains.Subdomains(netlas_connection)
+    existing_subdomains = SubdomainS.search(names=perimeter.brandnames,
+                                            legit_topdomains=perimeter.topdomains)
+    potential_phishing.extend(existing_subdomains)
+
+    # Тратит очень много времени (поэтому неэффективно использовать без прогресс бара)
+    # + нужно вынести это куда-то и изменить логику
+    # KeywordS = keywords.Keywords(netlas_connection)
+    # возможно, код ниже стоит перенести в keywords.py
+    # for domain in potential_phishing:
+    #    result = KeywordS.search(domain=domain, keywords=perimeter.keywords).values()
+    #    for keyword in result:
+    #        if keyword > 1:
+    #            pass  # нужно продумать логику, что делать при совпадениях
+
+    # добавить whoisreg и urlsearch
+
+    # тут красивый вывод potential_phishing
+    print(potential_phishing)
 
 
 if __name__ == "__main__":

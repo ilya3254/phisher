@@ -1,3 +1,4 @@
+from rich.progress import Progress
 from netlas import Netlas
 from time import sleep
 
@@ -15,12 +16,15 @@ class Keywords():
     # Returns a dictionary where the keys are keywords and the values are the number of matches (0 or >=1).
     def search(self, domain: str, keywords: list) -> dict:
         result = {keyword: 0 for keyword in keywords}
-        for keyword in keywords:
-            query = self._make_query(domain, keyword)
-            count = self.netlas_connection.count(datatype="response",
-                                                 query=query)['count']
-            result[keyword] = count
-            sleep(1)
+        with Progress() as progress:
+            total_task = progress.add_task(f"[green]Search for keywords for {domain}...", total=len(keywords))
+            for keyword in keywords:
+                query = self._make_query(domain, keyword)
+                count = self.netlas_connection.count(datatype="response",
+                                                     query=query)['count']
+                result[keyword] = count
+                progress.update(total_task, advance=1)
+                sleep(1)
         return result
 
 
