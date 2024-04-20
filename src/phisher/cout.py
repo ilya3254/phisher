@@ -61,6 +61,9 @@ def print_domains(domains_criticality=None):
     table.add_column("Criticality", style="bold",
                      width=max_column_length + 10, justify="center")
 
+    # Define criticality values
+    criticality_values = ["Legitimate", "Low", "Medium", "High", "Critical"]
+
     # Map criticality values to color gradients
     criticality_colors = {
         "Legitimate": "green",
@@ -72,7 +75,8 @@ def print_domains(domains_criticality=None):
 
     # Populate the table with domain-criticality pairs with colored text
     for domain, criticality_value in sorted_domains:
-        criticality_label = f"[{criticality_colors[criticality_value]}]{criticality_value}[/]"
+        criticality_name = criticality_values[int(criticality_value)]
+        criticality_label = f"[{criticality_colors[criticality_name]}]{criticality_name}[/]"
         table.add_row(domain, criticality_label)
 
     console.print(table)
@@ -89,7 +93,5 @@ def print_percents(total: int):
 
 
 # Example usage:
-# print_banner()
-# print()
-# print_percents(100)
-# print_domains()
+print_banner()
+print_domains({"123.ru":"0", "qwe.com":"3"})
