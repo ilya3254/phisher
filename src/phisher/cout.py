@@ -93,5 +93,5 @@ def print_percents(total: int):
 
 
 # Example usage:
-print_banner()
-print_domains({"123.ru":"0", "qwe.com":"3"})
+#print_banner()
+#print_domains({"123.ru":"0", "qwe.com":"3"})

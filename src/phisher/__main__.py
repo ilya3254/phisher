@@ -40,7 +40,7 @@ def main():
     correct_domains, wrong_domains = registrant.search(
         domains=potential_phishing, whois_data=perimeter.whois
     )
-
+    
     potential_phishing = registrant.domain_double_check(
         connection=netlas_connection,
         true_links=perimeter.imglinks,
@@ -48,17 +48,13 @@ def main():
         wrong_domains=wrong_domains
     )
 
-    # Print information table
-    print("\n")
-    cout.print_domains()
-    print("\n")
-
-    # Print correct domains
+    # Add correct domains
     if correct_domains:
-        print("The correct domains that have been found:")
-        print(correct_domains)
-    # тут красивый вывод potential_phishing
-    print(potential_phishing)
+        wrong_domains.update(correct_domains)
+
+    # Print phishing domains
+    print("\n")
+    cout.print_domains(wrong_domains)
 
 
 if __name__ == "__main__":
