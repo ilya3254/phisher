@@ -51,9 +51,7 @@ class WhoisIdentification:
                     )
                     bytes_data = b"".join(iterator)
                     results = parse_jsons(bytes_data.decode("utf-8"))
-                    domain_task = progress.add_task(f"[yellow]Check whois registrations for {domain}...", total=len(results))
                     for result in results:
-                        progress.update(domain_task, advance=1)
                         if self._check_registration_data(result["data"], whois_data):
                             correct_domains[result["data"]["domain"]] = 0
                         else:
@@ -76,7 +74,8 @@ class WhoisIdentification:
                         wrong_domains[w_domain] += 1
                         break
             except:
-                None
+                print(f"Failed connection with {w_domain}")
+
             occurrences = Keywords(connection).search(w_domain, keywords)
             for occur in occurrences:
                 if occurrences[occur] > 0:
