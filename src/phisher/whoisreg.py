@@ -5,6 +5,7 @@ from netlas import Netlas
 
 from links_check import FindLinks
 from keywords import Keywords
+from rich.progress import Progress
 
 
 def parse_jsons(json_string):
@@ -40,21 +41,27 @@ class WhoisIdentification:
     def search(self, domains: list, whois_data: dict) -> tuple[dict, dict]:
         correct_domains = dict()  # domains that match the registration data
         wrong_domains = dict()  # domains that don't match the registration data
-        for domain in domains:
-            count = self.netlas_connection.count(datatype="whois-domain", query=domain)["count"]
-            if count != 0:
-                iterator = self.netlas_connection.download(
-                    datatype="whois-domain", query=domain, size=count
-                )
-                bytes_data = b"".join(iterator)
-                results = parse_jsons(bytes_data.decode("utf-8"))
-                for result in results:
-                    if self._check_registration_data(result["data"], whois_data):
-                        correct_domains[result["data"]["domain"]] = 0
-                    else:
-                        if result["data"]["domain"] not in wrong_domains:
-                            wrong_domains[result["data"]["domain"]] = 1
-            sleep(1)
+        with Progress() as progress:
+            total_task = progress.add_task("[yellow]Check whois registrations...", total=len(domains))
+            for domain in domains:
+                count = self.netlas_connection.count(datatype="whois-domain", query=domain)["count"]
+                if count != 0:
+                    iterator = self.netlas_connection.download(
+                        datatype="whois-domain", query=domain, size=count
+                    )
+                    bytes_data = b"".join(iterator)
+                    results = parse_jsons(bytes_data.decode("utf-8"))
+                    domain_task = progress.add_task(f"[yellow]Check whois registrations for {domain}...", total=len(results))
+                    for result in results:
+                        progress.update(domain_task, advance=1)
+                        if self._check_registration_data(result["data"], whois_data):
+                            correct_domains[result["data"]["domain"]] = 0
+                        else:
+                            if result["data"]["domain"] not in wrong_domains:
+                                wrong_domains[result["data"]["domain"]] = 1
+                progress.update(total_task, advance=1)
+                sleep(1)
+                
         return correct_domains, wrong_domains
     
     # Evaluates pages of wrong domains for the occurrence of official images and keywords
@@ -78,7 +85,7 @@ class WhoisIdentification:
         return wrong_domains
 
 # Example for debugging
-input_domains = ["bspb.*"]
+input_domains = ["bspb.ru", "www.bspb.ru", "travel.bspb.ru"," margin.fx.bspb.ru"]
 whoisreg = {
     "organisation": ['PJSC "Bank "Saint-Petersburg"'],
     "email": [],
