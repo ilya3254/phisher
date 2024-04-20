@@ -17,7 +17,7 @@ def print_banner():
 ██╔═══╝░██╔══██║██║░╚═══██╗██╔══██║██╔══╝░░██╔══██╗
 ██║░░░░░██║░░██║██║██████╔╝██║░░██║███████╗██║░░██║
 ╚═╝░░░░░╚═╝░░╚═╝╚═╝╚═════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
-            """
+             """
     banner_text = Text(banner, style="bold red", justify="center")
     banner_panel = Panel(banner_text, title="Identify Phishing and Shadow-IT Resources",
                          subtitle="[red]Stop Fraudulent Activities[/red]", width=80)
@@ -90,7 +90,7 @@ def print_percents(total: int):
 
 
 # Example usage:
-print_banner()
-print()
-print_percents(100)
-print_domains()
+# print_banner()
+# print()
+# print_percents(100)
+# print_domains()
