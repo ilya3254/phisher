@@ -42,7 +42,7 @@ class WhoisIdentification:
         correct_domains = dict()  # domains that match the registration data
         wrong_domains = dict()  # domains that don't match the registration data
         with Progress() as progress:
-            total_task = progress.add_task("[yellow]Check whois registrations...", total=len(domains))
+            total_task = progress.add_task("[green]Check whois registrations...", total=len(domains))
             for domain in domains:
                 count = self.netlas_connection.count(datatype="whois-domain", query=domain)["count"]
                 if count != 0:

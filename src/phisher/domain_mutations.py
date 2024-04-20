@@ -65,7 +65,7 @@ class DomainMutations:
     def search(self, domains: list) -> list:
         results = []
         with Progress() as progress:
-            total_task = progress.add_task("[yellow]Search for domain mutations...", total=len(domains))
+            total_task = progress.add_task("[green]Search for domain mutations...", total=len(domains))
             for domain in domains:
                 mutations = self._mutate_domain(domain)
                 queries = self._make_query(mutations=mutations)

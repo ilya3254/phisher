@@ -24,7 +24,7 @@ class Subdomains():
         domains = []
         legit_domains_exception = "!domain:(" + " || ".join([f"*.{domain}" for domain in legit_topdomains]) + ")"
         with Progress() as progress:
-            total_task = progress.add_task("[yellow]Search for subdomains...", total=len(names))
+            total_task = progress.add_task("[green]Search for subdomains...", total=len(names))
             for name in names:
                 query = self._make_query(name, legit_domains_exception, max_level)
                 count = self.netlas_connection.count(datatype="domain",

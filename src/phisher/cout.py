@@ -36,7 +36,6 @@ def print_banner():
     console.print(Text(
         "Usage: python phisher [input_file] [api_key]", style="bold", justify="center"))
 
-
 def print_domains(domains_criticality=None):
     if not domains_criticality:
         domains_criticality = {
@@ -81,7 +80,7 @@ def print_domains(domains_criticality=None):
 
 def print_percents(total: int):
     with Progress() as progress:
-        task = progress.add_task("[yellow]Searching resources...", total=total)
+        task = progress.add_task("[green]Searching resources...", total=total)
         while not progress.finished:
             for i in range(1, total + 1):
                 progress.update(task, completed=i)

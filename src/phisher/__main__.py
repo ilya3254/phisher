@@ -4,17 +4,19 @@ import cout
 import inparse
 import domain_mutations
 import subdomains
-import keywords
+import whoisreg
 
 
 def main():
-    # Print programm banner
+    # Main greeting
+    print("\n")
     cout.print_banner()
+    print("\n")
 
     # Processing command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("perimeter", help="Path to file with perimeter data")
-    parser.add_argument("apikey", help="Personal Netlas API key")
+    parser.add_argument("-p", "--perimeter", help="Path to file with perimeter data")
+    parser.add_argument("-a", "--apikey", help="Personal Netlas API key")
     args = parser.parse_args()
 
     # Processing
@@ -33,19 +35,28 @@ def main():
     existing_subdomains = SubdomainS.search(names=perimeter.brandnames,
                                             legit_topdomains=perimeter.topdomains)
     potential_phishing.extend(existing_subdomains)
+    
+    registrant = whoisreg.WhoisIdentification(netlas_connection)
+    correct_domains, wrong_domains = registrant.search(
+        domains=potential_phishing, whois_data=perimeter.whois
+    )
 
-    # Тратит очень много времени (поэтому неэффективно использовать без прогресс бара)
-    # + нужно вынести это куда-то и изменить логику
-    # KeywordS = keywords.Keywords(netlas_connection)
-    # возможно, код ниже стоит перенести в keywords.py
-    # for domain in potential_phishing:
-    #    result = KeywordS.search(domain=domain, keywords=perimeter.keywords).values()
-    #    for keyword in result:
-    #        if keyword > 1:
-    #            pass  # нужно продумать логику, что делать при совпадениях
+    potential_phishing = registrant.domain_double_check(
+        connection=netlas_connection,
+        true_links=perimeter.imglinks,
+        keywords=perimeter.keywords,
+        wrong_domains=wrong_domains
+    )
 
-    # добавить whoisreg и urlsearch
+    # Print information table
+    print("\n")
+    cout.print_domains()
+    print("\n")
 
+    # Print correct domains
+    if correct_domains:
+        print("The correct domains that have been found:")
+        print(correct_domains)
     # тут красивый вывод potential_phishing
     print(potential_phishing)
 
