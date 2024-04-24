@@ -1,10 +1,11 @@
 import netlas
 import argparse
+from rich.progress import Progress
 import cout
 import inparse
 import domain_mutations
 import subdomains
-import keywords
+from keywords import Keywords
 
 
 def main():
@@ -31,15 +32,16 @@ def main():
                                             legit_topdomains=perimeter.topdomains)
     potential_phishing.extend(existing_subdomains)
 
-    # Тратит очень много времени (поэтому неэффективно использовать без прогресс бара)
-    # + нужно вынести это куда-то и изменить логику
-    # KeywordS = keywords.Keywords(netlas_connection)
-    # возможно, код ниже стоит перенести в keywords.py
-    # for domain in potential_phishing:
-    #    result = KeywordS.search(domain=domain, keywords=perimeter.keywords).values()
-    #    for keyword in result:
-    #        if keyword > 1:
-    #            pass  # нужно продумать логику, что делать при совпадениях
+    # Для теста. Все равно тратит много времени, но намного меньше, чем до этого
+    with Progress() as progress:
+        total_task = progress.add_task("[red]Search for keywords...", total=len(potential_phishing))
+        for domain in potential_phishing:
+            result = Keywords.search(domain=domain, keywords=perimeter.keywords).values()
+            #for keyword in result:
+            #    if keyword > 1:
+            #        pass
+            print(result)
+            progress.update(total_task, advance=1)
 
     # добавить whoisreg и urlsearch
 
