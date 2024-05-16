@@ -1,6 +1,5 @@
 import netlas
 import argparse
-from rich.progress import Progress
 import cout
 import inparse
 import domain_mutations
@@ -36,6 +35,7 @@ def main():
     existing_subdomains = SubdomainS.search(names=perimeter.brandnames,
                                             legit_topdomains=perimeter.topdomains)
     potential_phishing.extend(existing_subdomains)
+
     registrant = whoisreg.WhoisIdentification(netlas_connection)
     correct_domains, wrong_domains = registrant.search(
         domains=potential_phishing, whois_data=perimeter.whois
