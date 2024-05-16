@@ -69,7 +69,7 @@ class DomainMutations:
             for domain in domains:
                 mutations = self._mutate_domain(domain)
                 queries = self._make_query(mutations=mutations)
-                domain_task = progress.add_task(f"[blue]Search mutations for {domain}...", total=len(queries))
+                domain_task = progress.add_task(f"[blue]Search for mutations for the {domain}...", total=len(queries))
                 for query in queries:
                     count = self.netlas_connection.count(datatype="domain",
                                                          query=query)['count']

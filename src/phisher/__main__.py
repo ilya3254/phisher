@@ -15,8 +15,8 @@ def main():
 
     # Processing command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("perimeter", help="Path to file with perimeter data")
-    parser.add_argument("apikey", help="Personal Netlas API key")
+    parser.add_argument("-p", "--perimeter", help="Path to file with perimeter data", required=True)
+    parser.add_argument("-a", "--apikey", help="Personal Netlas API key", required=True)
     args = parser.parse_args()
 
     # Processing
