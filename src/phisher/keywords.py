@@ -17,7 +17,7 @@ class Keywords():
     def search(self, domain: str, keywords: list) -> dict:
         result = {keyword: 0 for keyword in keywords}
         with Progress() as progress:
-            total_task = progress.add_task(f"[green]Search for keywords for {domain}...", total=len(keywords))
+            total_task = progress.add_task(f"[blue]Search for keywords for {domain}...", total=len(keywords))
             for keyword in keywords:
                 query = self._make_query(domain, keyword)
                 count = self.netlas_connection.count(datatype="response",

@@ -65,11 +65,11 @@ class DomainMutations:
     def search(self, domains: list) -> list:
         results = []
         with Progress() as progress:
-            total_task = progress.add_task("[red]Search for domain mutations...", total=len(domains))
+            total_task = progress.add_task("[green]Search for domain mutations...", total=len(domains))
             for domain in domains:
                 mutations = self._mutate_domain(domain)
                 queries = self._make_query(mutations=mutations)
-                domain_task = progress.add_task(f"[green]Search for mutations for {domain}...", total=len(queries))
+                domain_task = progress.add_task(f"[blue]Search for mutations for the {domain}...", total=len(queries))
                 for query in queries:
                     count = self.netlas_connection.count(datatype="domain",
                                                          query=query)['count']
@@ -90,7 +90,7 @@ class DomainMutations:
 
 # Example for debugging
 if __name__ == "__main__":
-    netlas_connection = Netlas(api_key="apikey")
+    netlas_connection = Netlas(api_key="1CNI8pZAx3vYWfJqaD74fEc1cSi5KsTW")
     mutations = DomainMutations(netlas_connection)
     domains = mutations.search(domains=["wildberries.ru"])
     print(domains)

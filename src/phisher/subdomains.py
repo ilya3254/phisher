@@ -24,7 +24,7 @@ class Subdomains():
         domains = []
         legit_domains_exception = "!domain:(" + " || ".join([f"*.{domain}" for domain in legit_topdomains]) + ")"
         with Progress() as progress:
-            total_task = progress.add_task("[red]Search for subdomains...", total=len(names))
+            total_task = progress.add_task("[green]Search for subdomains...", total=len(names))
             for name in names:
                 query = self._make_query(name, legit_domains_exception, max_level)
                 count = self.netlas_connection.count(datatype="domain",
@@ -45,7 +45,7 @@ class Subdomains():
 
 # Example for debugging
 if __name__ == "__main__":
-    netlas_connection = Netlas(api_key="apikey")
+    netlas_connection = Netlas(api_key="1CNI8pZAx3vYWfJqaD74fEc1cSi5KsTW")
     SubdomainS = Subdomains(netlas_connection)
     domains = SubdomainS.search(names=["bspb", "bank-spb", "bank-saint-petersburg"],
                                 legit_topdomains=["bspb.ru", "bspb-processing.ru", "ved-360.ru", "bspb.org", "bspb-redbreasts.org", "www.bspb.lt", "bspb-intl.com", "bspb.biz", "bspb.parts", "bspb.pl", "bspb-pkb.com", "bspb.net", "bspb-asso-bretagne.fr", "bspb.org", "adv.br"])
