@@ -76,7 +76,7 @@ class WhoisIdentification:
             except:
                 print(f"Failed connection with {w_domain}")
 
-            occurrences = Keywords(connection).search(w_domain, keywords)
+            occurrences = Keywords.search(w_domain, keywords)
             for occur in occurrences:
                 if occurrences[occur] > 0:
                     wrong_domains[w_domain] += 1
