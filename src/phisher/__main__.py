@@ -5,14 +5,19 @@ import cout
 import inparse
 import domain_mutations
 import subdomains
-from keywords import Keywords
+import whoisreg
 
 
 def main():
+    # Main greeting
+    print("\n")
+    cout.print_banner()
+    print("\n")
+
     # Processing command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--perimeter", help="Path to file with perimeter data")
-    parser.add_argument("-a", "--apikey", help="Personal Netlas API key")
+    parser.add_argument("-p", "--perimeter", help="Path to file with perimeter data", required=True)
+    parser.add_argument("-a", "--apikey", help="Personal Netlas API key", required=True)
     args = parser.parse_args()
 
     # Processing
@@ -31,22 +36,25 @@ def main():
     existing_subdomains = SubdomainS.search(names=perimeter.brandnames,
                                             legit_topdomains=perimeter.topdomains)
     potential_phishing.extend(existing_subdomains)
+    registrant = whoisreg.WhoisIdentification(netlas_connection)
+    correct_domains, wrong_domains = registrant.search(
+        domains=potential_phishing, whois_data=perimeter.whois
+    )
+    
+    potential_phishing = registrant.domain_double_check(
+        connection=netlas_connection,
+        true_links=perimeter.imglinks,
+        keywords=perimeter.keywords,
+        wrong_domains=wrong_domains
+    )
 
-    # Для теста. Все равно тратит много времени, но намного меньше, чем до этого
-    with Progress() as progress:
-        total_task = progress.add_task("[red]Search for keywords...", total=len(potential_phishing))
-        for domain in potential_phishing:
-            result = Keywords.search(domain=domain, keywords=perimeter.keywords).values()
-            #for keyword in result:
-            #    if keyword > 1:
-            #        pass
-            print(result)
-            progress.update(total_task, advance=1)
+    # Add correct domains
+    if correct_domains:
+        wrong_domains.update(correct_domains)
 
-    # добавить whoisreg и urlsearch
-
-    # тут красивый вывод potential_phishing
-    print(potential_phishing)
+    # Print phishing domains
+    print("\n")
+    cout.print_domains(wrong_domains)
 
 
 if __name__ == "__main__":
