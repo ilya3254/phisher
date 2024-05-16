@@ -4,9 +4,8 @@ from os import path, abort
 
 def read(file):
     if path.exists(file) is True:
-        fd = open(file, "r")
-        inf = json.load(fd)
-        fd.close()
+        with open(file, 'r', encoding='utf-8') as fd:
+            inf = json.load(fd)
         return inf
     else:
         print("read error: File does not exist")
