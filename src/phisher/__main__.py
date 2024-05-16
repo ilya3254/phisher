@@ -42,7 +42,6 @@ def main():
     )
     
     potential_phishing = registrant.domain_double_check(
-        connection=netlas_connection,
         true_links=perimeter.imglinks,
         keywords=perimeter.keywords,
         wrong_domains=wrong_domains

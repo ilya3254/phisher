@@ -65,7 +65,7 @@ class WhoisIdentification:
     # Evaluates pages of wrong domains for the occurrence of official images and keywords
     # Returns a dict() of invalid domains with a criticality score (1 - 3)
     @staticmethod
-    def domain_double_check(connection: any, true_links: list, keywords: list, wrong_domains: dict) -> dict:
+    def domain_double_check(true_links: list, keywords: list, wrong_domains: dict) -> dict:
         for w_domain in wrong_domains:
             try:
                 suspicious_links = FindLinks().check_resources(w_domain)
@@ -102,7 +102,6 @@ if __name__ == "__main__":
     
     real_links = FindLinks().check_resources('bspb.ru')
     wrong_domains = registrant.domain_double_check(
-        connection=netlas_connection,
         true_links=real_links,
         keywords=["Банк", "Банк Санкт-Петербург", "БСПБ"],
         wrong_domains=wrong_domains
